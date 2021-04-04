@@ -4,7 +4,10 @@ const gallery = document.getElementById('gallery');
 const modalContainer = document.querySelector('.modal-container');
 const modalInfo = document.querySelector('.modal-info-container');
 const modalClose = document.getElementById('modal-close-btn');
+const modalPrev = document.getElementById('modal-prev');
+const modalNext = document.getElementById('modal-next');
 let data = null;
+let currentIndex = null;
 var dateOptions = {
     year: "numeric",
     month: "2-digit",
@@ -13,7 +16,14 @@ var dateOptions = {
 
 modalContainer.style.display = 'none';
 modalClose.addEventListener('click', () => modalContainer.style.display = 'none');
-
+modalPrev.addEventListener('click', () => {
+    currentIndex = currentIndex === 0 ? currentIndex : currentIndex -= 1;
+    displayModal(currentIndex);
+});
+modalNext.addEventListener('click', () => {
+    currentIndex = currentIndex === numberOfResults - 1 ? currentIndex : currentIndex += 1;
+    displayModal(currentIndex);
+});
 
 const xhr = new XMLHttpRequest();
 xhr.open('GET', `${randomuserUrl}${numberOfResults}`);
@@ -57,6 +67,7 @@ function displayModal(index) {
 
 gallery.addEventListener('click', e => {
     if(e.target !== gallery){
-        displayModal(e.target.closest('.card').dataset.index);
+        currentIndex = e.target.closest('.card').dataset.index; 
+        displayModal(currentIndex);
     }
 });
