@@ -67,7 +67,7 @@ function displayModal(index) {
 
 gallery.addEventListener('click', e => {
     if(e.target !== gallery){
-        currentIndex = e.target.closest('.card').dataset.index; 
+        currentIndex = parseInt(e.target.closest('.card').dataset.index); 
         displayModal(currentIndex);
     }
 });
