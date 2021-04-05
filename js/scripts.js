@@ -9,28 +9,57 @@ const modalNext = document.getElementById('modal-next');
 const searchContainer = document.querySelector('.search-container');
 let data = null;
 let currentIndex = null;
-var dateOptions = {
+const dateOptions = {
     year: "numeric",
     month: "2-digit",
     day: "2-digit"
 };
 
 
-searchContainer.innerHTML = `<form action="#" method="get">
-<input type="search" id="search-input" class="search-input" placeholder="Search...">
-<input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
-</form>`;
-const searchInput = document.getElementById('search-input');
-searchInput.addEventListener('keyup', () => {
-    filterUsers(searchInput.value);
-});
+/**
+ * Creates a employee card
+ * @param {Object} employee - An object represnting the employee 
+ * @param {Integer} index - An index to assign the employee 
+ */
+function displayemployee(employee, index) {
+    html = `<div class="card" data-index=${index}>
+        <div class="card-img-container">
+            <img class="card-img" src="${employee.picture.large}" alt="profile picture">
+        </div>
+        <div class="card-info-container">
+            <h3 id="name" class="card-name cap">${employee.name.first} ${employee.name.last}</h3>
+            <p class="card-text">${employee.email}</p>
+            <p class="card-text cap">${employee.location.city}, ${employee.location.state}</p>
+        </div>
+    </div>`
+    gallery.insertAdjacentHTML("beforeend", html);
+}
 
 
-const searchButton = document.getElementById('search-submit');
-searchButton.addEventListener('click', () => filterUsers(searchInput.value));
+/**
+ * Display a employee in a modal
+ * @param {Integer} index - The index of the employee to display 
+ */
+function displayModal(index) {
+    const employee = data[index];
+    html = `<img class="modal-img" src="${employee.picture.large}" alt="profile picture">
+            <h3 id="name" class="modal-name cap">${employee.name.first} ${employee.name.last}</h3>
+            <p class="modal-text">${employee.email}</p>
+            <p class="modal-text cap">${employee.location.city}</p>
+            <hr>
+            <p class="modal-text">${employee.cell}</p>
+            <p class="modal-text">${employee.location.street.number} ${employee.location.street.name}, ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
+            <p class="modal-text">Birthday: ${new Date(employee.dob.date).toLocaleString("en-US", dateOptions)}</p>`
+    modalInfo.innerHTML = html;
+    modalContainer.style.display = 'initial';
+}
 
 
-function filterUsers(searchString) {
+/**
+ * Filter employees by name
+ * @param {String} searchString - String to filter employees against
+ */
+function filteremployees(searchString) {
     const names = document.querySelectorAll('.card-name');
     names.forEach(name => { name.parentElement.parentElement.style.display = 'none' });
     names.forEach(name => {
@@ -41,6 +70,24 @@ function filterUsers(searchString) {
 }
 
 
+/**
+ * Setup search
+ */
+searchContainer.innerHTML = `<form action="#" method="get">
+<input type="search" id="search-input" class="search-input" placeholder="Search...">
+<input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+</form>`;
+const searchInput = document.getElementById('search-input');
+searchInput.addEventListener('keyup', () => {
+    filteremployees(searchInput.value);
+});
+const searchButton = document.getElementById('search-submit');
+searchButton.addEventListener('click', () => filteremployees(searchInput.value));
+
+
+/**
+ * Set up modal
+ */
 modalContainer.style.display = 'none';
 modalClose.addEventListener('click', () => modalContainer.style.display = 'none');
 modalPrev.addEventListener('click', () => {
@@ -52,48 +99,27 @@ modalNext.addEventListener('click', () => {
     displayModal(currentIndex);
 });
 
-const xhr = new XMLHttpRequest();
-xhr.open('GET', `${randomuserUrl}${numberOfResults}`);
-xhr.onload = () => {
-    if(xhr.status === 200) {
-        data = JSON.parse(xhr.responseText).results;
-        data.forEach((user, index) => displayUser(user, index));
-    }
-}
-xhr.send();
 
-function displayUser(user, index) {
-    html = `<div class="card" data-index=${index}>
-        <div class="card-img-container">
-            <img class="card-img" src="${user.picture.large}" alt="profile picture">
-        </div>
-        <div class="card-info-container">
-            <h3 id="name" class="card-name cap">${user.name.first} ${user.name.last}</h3>
-            <p class="card-text">${user.email}</p>
-            <p class="card-text cap">${user.location.city}, ${user.location.state}</p>
-        </div>
-    </div>`
-    gallery.insertAdjacentHTML("beforeend", html);
-}
-
-function displayModal(index) {
-
-    const user = data[index];
-    html = `<img class="modal-img" src="${user.picture.large}" alt="profile picture">
-            <h3 id="name" class="modal-name cap">${user.name.first} ${user.name.last}</h3>
-            <p class="modal-text">${user.email}</p>
-            <p class="modal-text cap">${user.location.city}</p>
-            <hr>
-            <p class="modal-text">${user.cell}</p>
-            <p class="modal-text">${user.location.street.number} ${user.location.street.name}, ${user.location.city}, ${user.location.state} ${user.location.postcode}</p>
-            <p class="modal-text">Birthday: ${new Date(user.dob.date).toLocaleString("en-US", dateOptions)}</p>`
-    modalInfo.innerHTML = html;
-    modalContainer.style.display = 'initial';
-}
-
+/**
+ * Setup click event on cards
+ */
 gallery.addEventListener('click', e => {
     if(e.target !== gallery){
         currentIndex = parseInt(e.target.closest('.card').dataset.index); 
         displayModal(currentIndex);
     }
 });
+
+
+/**
+ * Get employee data
+ */
+const xhr = new XMLHttpRequest();
+xhr.open('GET', `${randomuserUrl}${numberOfResults}`);
+xhr.onload = () => {
+    if(xhr.status === 200) {
+        data = JSON.parse(xhr.responseText).results;
+        data.forEach((employee, index) => displayemployee(employee, index));
+    }
+}
+xhr.send();
