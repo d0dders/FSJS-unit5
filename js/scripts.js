@@ -6,6 +6,7 @@ const modalInfo = document.querySelector('.modal-info-container');
 const modalClose = document.getElementById('modal-close-btn');
 const modalPrev = document.getElementById('modal-prev');
 const modalNext = document.getElementById('modal-next');
+const searchContainer = document.querySelector('.search-container');
 let data = null;
 let currentIndex = null;
 var dateOptions = {
@@ -13,6 +14,32 @@ var dateOptions = {
     month: "2-digit",
     day: "2-digit"
 };
+
+
+searchContainer.innerHTML = `<form action="#" method="get">
+<input type="search" id="search-input" class="search-input" placeholder="Search...">
+<input type="submit" value="&#x1F50D;" id="search-submit" class="search-submit">
+</form>`;
+const searchInput = document.getElementById('search-input');
+searchInput.addEventListener('keyup', () => {
+    filterUsers(searchInput.value);
+});
+
+
+const searchButton = document.getElementById('search-submit');
+searchButton.addEventListener('click', () => filterUsers(searchInput.value));
+
+
+function filterUsers(searchString) {
+    const names = document.querySelectorAll('.card-name');
+    names.forEach(name => { name.parentElement.parentElement.style.display = 'none' });
+    names.forEach(name => {
+        if(name.innerText.toLowerCase().includes(searchString.toLowerCase())){
+            name.parentElement.parentElement.style.display = 'initial';
+        }
+    });
+}
+
 
 modalContainer.style.display = 'none';
 modalClose.addEventListener('click', () => modalContainer.style.display = 'none');
@@ -36,7 +63,6 @@ xhr.onload = () => {
 xhr.send();
 
 function displayUser(user, index) {
-    console.log(user);
     html = `<div class="card" data-index=${index}>
         <div class="card-img-container">
             <img class="card-img" src="${user.picture.large}" alt="profile picture">
