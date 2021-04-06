@@ -47,11 +47,13 @@ function displayModal(index) {
             <p class="modal-text">${employee.email}</p>
             <p class="modal-text cap">${employee.location.city}</p>
             <hr>
-            <p class="modal-text">${employee.cell}</p>
+            <p class="modal-text">${employee.cell.replace('-', ' ')}</p>
             <p class="modal-text">${employee.location.street.number} ${employee.location.street.name}, ${employee.location.city}, ${employee.location.state} ${employee.location.postcode}</p>
             <p class="modal-text">Birthday: ${new Date(employee.dob.date).toLocaleString("en-US", dateOptions)}</p>`
     modalInfo.innerHTML = html;
     modalContainer.style.display = 'initial';
+    modalPrev.style.display = index <= 0 ? 'none' : 'initial';
+    modalNext.style.display = index >= numberOfResults - 1 ? 'none' : 'initial';
 }
 
 
